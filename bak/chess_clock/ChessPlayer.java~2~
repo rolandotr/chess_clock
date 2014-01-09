@@ -1,0 +1,13 @@
+package chess_clock;
+
+/** comment 2006-Oct-28 Trujillo
+ * Esta es la clase encargada de un jugador, el mismo jugador es el que debe notificar
+* cuando es que juega etc.
+ */
+public class ChessPlayer {
+  public ChessPlayer() {
+    /** @todo implementar ChessPlayer() */
+    throw new UnsupportedOperationException();
+  }
+
+}

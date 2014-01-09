@@ -1,0 +1,86 @@
+package chess_clock;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class Frame1 extends JFrame {
+  JPanel contentPane;
+  BorderLayout borderLayout1 = new BorderLayout();
+  JLabel lb = new JLabel();
+
+  //Construct the frame
+  public Frame1() {
+    enableEvents(AWTEvent.WINDOW_EVENT_MASK);
+    try {
+      jbInit();
+    }
+    catch(Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  //Component initialization
+  private void jbInit() throws Exception  {
+    contentPane = (JPanel) this.getContentPane();
+    lb.setToolTipText("");
+    lb.setText("");
+    contentPane.setLayout(borderLayout1);
+    this.setSize(new Dimension(400, 300));
+    this.setTitle("Frame Title");
+    contentPane.add(lb, BorderLayout.CENTER);
+    testing();
+  }
+
+  //Overridden so we can exit when window is closed
+  protected void processWindowEvent(WindowEvent e) {
+    super.processWindowEvent(e);
+    if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+      System.exit(0);
+    }
+  }
+
+  private static ImageIcon DOT_DOT = new ImageIcon("./imagenes/dot_dot.jpg");
+  private static ImageIcon CERO = new ImageIcon("./imagenes/0.jpg");
+  private static ImageIcon UNO = new ImageIcon("./imagenes/1.jpg");
+  private static ImageIcon DOS = new ImageIcon("./imagenes/2.jpg");
+  private static ImageIcon TRES = new ImageIcon("./imagenes/3.jpg");
+  private static ImageIcon CUATRO = new ImageIcon("./imagenes/4.jpg");
+  private static ImageIcon CINCO = new ImageIcon("./imagenes/5.jpg");
+  private static ImageIcon SEIS = new ImageIcon("./imagenes/6.jpg");
+  private static ImageIcon SIETE = new ImageIcon("./imagenes/7.jpg");
+  private static ImageIcon OCHO = new ImageIcon("./imagenes/8.jpg");
+  private static ImageIcon NUEVE = new ImageIcon("./imagenes/9.jpg");
+
+  public class Test extends Thread{
+    public Test(){
+
+    }
+    private void testing(){
+      for (int i = 0; i <100000000; i++){
+        for (int j = 0; j <1000000; j++){}
+        lb.setIcon(getNumberIcon(i%10));
+      }
+    }
+
+    public void run(){
+      testing();
+    }
+
+    public Icon getNumberIcon(int new_m_dec) {
+      switch(new_m_dec){
+        case 0 : return CERO;
+        case 1 : return UNO;
+        case 2 : return DOS;
+        case 3 : return TRES;
+        case 4 : return CUATRO;
+        case 5 : return CINCO;
+        case 6 : return SEIS;
+        case 7 : return SIETE;
+        case 8 : return OCHO;
+        case 9 : return NUEVE;
+        default : throw new RuntimeException("...Esto es un bugs..");
+      }
+    }
+  }
+}

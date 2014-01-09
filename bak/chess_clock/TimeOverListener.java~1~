@@ -1,0 +1,5 @@
+package chess_clock;
+
+public static interface TimeOverListener{
+  public void timeOver();
+}

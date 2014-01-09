@@ -1,0 +1,188 @@
+package chess_clock;
+
+import javax.swing.*;
+
+/** comment 2006-Oct-28 Trujillo
+ * Esta es la clase encargada de un jugador, el mismo jugador es el que debe notificar
+* cuando es que juega etc.
+ */
+public class ChessTimer extends Thread{
+
+  private boolean go = false;
+  private JPanel pnClock;
+  private boolean finished = false;
+  private ChessTime chessTime;
+
+  private ImageIcon DOT_DOT = new ImageIcon("./imagenes/dot_dot.jpg");
+  private ImageIcon CERO = new ImageIcon("./imagenes/0.jpg");
+  private ImageIcon UNO = new ImageIcon("./imagenes/1.jpg");
+  private ImageIcon DOS = new ImageIcon("./imagenes/2.jpg");
+  private ImageIcon TRES = new ImageIcon("./imagenes/3.jpg");
+  private ImageIcon CUATRO = new ImageIcon("./imagenes/4.jpg");
+  private ImageIcon CINCO = new ImageIcon("./imagenes/5.jpg");
+  private ImageIcon SEIS = new ImageIcon("./imagenes/6.jpg");
+  private ImageIcon SIETE = new ImageIcon("./imagenes/7.jpg");
+  private ImageIcon OCHO = new ImageIcon("./imagenes/8.jpg");
+  private ImageIcon NUEVE = new ImageIcon("./imagenes/9.jpg");
+
+  //private JLabel lbClock = new JLabel();
+  private JLabel min1 = new JLabel(CERO);
+  private JLabel min2 = new JLabel(CERO);
+  private JLabel sec1 = new JLabel(CERO);
+  private JLabel sec2 = new JLabel(CERO);
+  private JLabel dot = new JLabel(DOT_DOT);
+  //esto es parte del init
+  private JLabel tf;
+
+  public ChessTimer(ChessTime chessTime, JPanel pnClock) {
+    super("chessTimer");
+    assert(chessTime != null) : "assert(chessTime != null)";
+    assert(pnClock != null) : "assert(pnClock != null)";
+    this.pnClock = pnClock;
+    this.chessTime = chessTime;
+    initJPanel();
+  }
+
+  /** comment 2006-Oct-28 Trujillo
+   * Este metodo es para ponerle lo que sea que vaya a tener el Panel
+   */
+  private void initJPanel() {
+    pnClock.removeAll();
+    pnClock.add(min1);
+    pnClock.add(min2);
+    pnClock.add(dot);
+    pnClock.add(sec1);
+    pnClock.add(sec2);
+    pnClock.validate();
+  }
+
+  public void para() {
+    go = false;
+  }
+
+  public void go() {
+    go = true;
+  }
+
+  private boolean already_run = false;
+
+  public void run() {
+    chessTime.start();
+    while(!finished){
+      if (go){
+        if (!already_run) {
+          chessTime.arranca();
+          already_run = true;
+        }
+        showTime();/** @todo Recuerda poner esto donde debe, es decir afuera
+        pero solo llamarlo cuando esta en !go por primera vez */
+      }
+      else{
+        chessTime.para();
+        already_run = false;
+//        try {
+//          sleep(500);
+//        } catch (InterruptedException ex) {
+//        }
+      }
+    }
+    chessTime.finished();
+  }
+
+  boolean min_decenas_post = false;
+  private int m_dec, m_uni, s_dec, s_uni;
+
+  /*private void showTime() {
+    int m = chessTime.getMinutes();
+    int s = chessTime.getSeconds();
+    lbClock.setText(m+":"+s);
+  }*/
+  boolean first_time = true;
+  private void showTime() {
+//    if (first_time){
+//      min1 = new JLabel();
+//      min2 = new JLabel();
+//      //dot = new JLabel(DOT_DOT);
+//      sec1 = new JLabel();
+//      sec2 = new JLabel();
+//      pnClock.removeAll();
+//      pnClock.add(min1);
+//      pnClock.add(min2);
+//      pnClock.add(dot);
+//      pnClock.add(sec1);
+//      pnClock.add(sec2);
+//      first_time = false;
+//    }
+    int m = chessTime.getMinutes();
+    int s = chessTime.getSeconds();
+    int new_m_dec = 0;
+    int new_m_uni, new_s_dec, new_s_uni;
+    JLabel aux = null;
+    if (m >= 10){
+      /** @todo implementar showTime() */
+      throw new UnsupportedOperationException();
+      /*new_m_dec = (m-m%10)/10;
+      if (min_decenas_post){
+        if (new_m_dec != m_dec){
+        }
+      }
+      else{
+        min_decenas_post = true;
+      }
+    }
+    else{
+      if (min_decenas_post){
+        min_decenas_post = false;
+        m_dec = 0;
+      }*/
+    }
+    m_dec = new_m_dec;
+    showTimeRemain(m%10, (s-s%10)/10, s%10);
+  }
+
+  private void showTimeRemain(int min, int s1, int s2) {
+    if (min == m_uni && s1 == s_dec && s2 == s_uni)
+      return;
+    if (min != m_uni) {
+      min2.setIcon(getNumberIcon(min));
+    }
+    if (s1 != s_dec) {
+      sec1.setIcon(getNumberIcon(s1));
+    }
+    if (s2 != s_uni) {
+      sec2.setIcon(getNumberIcon(s2));
+    }
+    pnClock.validate();
+  }
+
+  private Icon getNumberIcon(int new_m_dec) {
+    switch(new_m_dec){
+      case 0 : return CERO;
+      case 1 : return UNO;
+      case 2 : return DOS;
+      case 3 : return TRES;
+      case 4 : return CUATRO;
+      case 5 : return CINCO;
+      case 6 : return SEIS;
+      case 7 : return SIETE;
+      case 8 : return OCHO;
+      case 9 : return NUEVE;
+      default : throw new RuntimeException("...Esto es un bugs..");
+    }
+  }
+
+  public void finished() {
+    finished = true;
+  }
+
+  public void setHightPriority() {
+    setPriority(Thread.NORM_PRIORITY);
+    chessTime.setPriority(Thread.NORM_PRIORITY);
+  }
+
+  public void setLowPriority() {
+    setPriority(Thread.MIN_PRIORITY);
+    chessTime.setPriority(Thread.MIN_PRIORITY);
+  }
+
+}

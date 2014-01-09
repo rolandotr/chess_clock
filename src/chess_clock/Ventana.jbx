@@ -1,0 +1,72 @@
+[PropertyInfo]
+active_white,boolean,false,false, , ,false,<default>
+BLACK_WIN,byte,false,false, , ,false,<default>
+border1,Border,false,false, , ,false,<default>
+border2,Border,false,false, , ,false,<default>
+border3,Border,false,false, , ,false,<default>
+borderLayout1,BorderLayout,false,false, , ,false,<default>
+cbKey,JComboBox,false,false, , ,false,<default>
+change_player,boolean,false,false, , ,false,<default>
+game_over,boolean,false,false, , ,false,<default>
+game_state,byte,false,false, , ,false,<default>
+gridBagLayout1,GridBagLayout,false,false, , ,false,<default>
+gridBagLayout2,GridBagLayout,false,false, , ,false,<default>
+gridBagLayout3,GridBagLayout,false,false, , ,false,<default>
+gridLayout1,GridLayout,false,false, , ,false,<default>
+gridLayout2,GridLayout,false,false, , ,false,<default>
+gridLayout3,GridLayout,false,false, , ,false,<default>
+jButton1,JButton,false,false, , ,false,<default>
+jButton2,JButton,false,false, , ,false,<default>
+jLabel1,JLabel,false,false, , ,false,<default>
+jLabel2,JLabel,false,false, , ,false,<default>
+jLabel3,JLabel,false,false, , ,false,<default>
+jLabel4,JLabel,false,false, , ,false,<default>
+jPanel1,JPanel,false,false, , ,false,<default>
+jPanel2,JPanel,false,false, , ,false,<default>
+jPanel3,JPanel,false,false, , ,false,<default>
+m_dec_black,int,false,false, , ,false,<default>
+m_dec_white,int,false,false, , ,false,<default>
+m_uni_black,int,false,false, , ,false,<default>
+m_uni_white,int,false,false, , ,false,<default>
+min1_black,JLabel,false,false, , ,false,<default>
+min1_white,JLabel,false,false, , ,false,<default>
+min2_black,JLabel,false,false, , ,false,<default>
+min2_white,JLabel,false,false, , ,false,<default>
+NOT_DEFINED,byte,false,false, , ,false,<default>
+player_black,ChessTime,false,false, , ,false,<default>
+player_white,ChessTime,false,false, , ,false,<default>
+playing,boolean,false,false, , ,false,<default>
+pnBlack,JPanel,false,false, , ,false,<default>
+pnClock,JPanel,false,false, , ,false,<default>
+pnDefault,JPanel,false,false, , ,false,<default>
+pnOptions,JPanel,false,false, , ,false,<default>
+pnWhite,JPanel,false,false, , ,false,<default>
+rb10m,JRadioButton,false,false, , ,false,<default>
+rb12m10s,JRadioButton,false,false, , ,false,<default>
+rb25m,JRadioButton,false,false, , ,false,<default>
+rb2m12s,JRadioButton,false,false, , ,false,<default>
+rb4m2s,JRadioButton,false,false, , ,false,<default>
+rb5m,JRadioButton,false,false, , ,false,<default>
+rb5m10s,JRadioButton,false,false, , ,false,<default>
+rb60m,JRadioButton,false,false, , ,false,<default>
+rb90m30s,JRadioButton,false,false, , ,false,<default>
+s_dec_black,int,false,false, , ,false,<default>
+s_dec_white,int,false,false, , ,false,<default>
+s_uni_black,int,false,false, , ,false,<default>
+s_uni_white,int,false,false, , ,false,<default>
+sec1_black,JLabel,false,false, , ,false,<default>
+sec1_white,JLabel,false,false, , ,false,<default>
+sec2_black,JLabel,false,false, , ,false,<default>
+sec2_white,JLabel,false,false, , ,false,<default>
+spnIncr,JSpinner,false,false, , ,false,<default>
+spnTime,JSpinner,false,false, , ,false,<default>
+time_over,boolean,false,false, , ,false,<default>
+titledBorder1,TitledBorder,false,false, , ,false,<default>
+titledBorder2,TitledBorder,false,false, , ,false,<default>
+titledBorder3,TitledBorder,false,false, , ,false,<default>
+WHITE_WIN,byte,false,false, , ,false,<default>
+[IconNames]
+
+
+
+

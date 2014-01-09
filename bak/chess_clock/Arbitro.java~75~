@@ -1,0 +1,148 @@
+package chess_clock;
+
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JPanel;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
+
+public class Arbitro extends Thread{
+
+  protected GameListener listener;
+  protected ChessTimer player_white, player_black;
+  protected ChessTimer activeTimer;
+  private boolean active_white = true;
+  protected boolean change_player = false;
+  private boolean time_over = false;
+  protected boolean game_over;
+
+  private static byte WHITE_WIN = 1;
+  private static byte BLACK_WIN = 2;
+  private static byte NOT_DEFINED = 0;
+
+  private byte game_state = NOT_DEFINED;//0 si no esta definido, 1 white win, 2 black win
+
+  private int key = KeyEvent.VK_SPACE;//por defecto sera el espacio;
+
+  public KeyListener keyListener;
+
+  public Arbitro(Ventana frame, ChessTime time) {
+    super("Arbitro");
+    assert(time != null) : "assert(time != null)";
+    ChessTime time_white = time;
+    ChessTime time_black = (ChessTime)time.clone();
+    JPanel pnBlack = frame.getJPanelBlack();
+    JPanel pnWhite = frame.getJPanelWhite();
+    pnWhite.removeAll();
+    pnBlack.removeAll();
+    player_black = new ChessTimer(time_black, pnBlack);
+    player_white = new ChessTimer(time_white, pnWhite);
+    activeTimer = player_white;
+    game_over = false;
+    keyListener = new KeyAdapter(){
+      public void keyTyped(KeyEvent e) {
+        keyTypedEvent(e);
+      }
+    };
+    frame.addKeyListener(keyListener);
+    time_white.addTimeOverListener(new TimeOverListener(){
+      public void timeOver() {
+        if (game_state != NOT_DEFINED) return;//esto es un pequeno problema de concurrencia
+        time_over = true;
+        game_state = WHITE_WIN;
+        if (listener != null) listener.gameOver();
+      }
+    }
+    );
+    time_black.addTimeOverListener(new TimeOverListener(){
+      public void timeOver() {
+        if (game_state != NOT_DEFINED) return;//esto es un pequeno problema de concurrencia
+        time_over = true;
+        game_state = BLACK_WIN;
+        if (listener != null) listener.gameOver();
+      }
+    }
+    );
+  }
+
+  public void keyTypedEvent(KeyEvent e){
+    //if (e.getKeyChar() == key){//es lo que esperamos
+      change_player = true;
+    //}
+  }
+
+
+  public void addGameListener(GameListener listener){
+    assert(listener != null) : "assert(listener != null)";
+    this.listener = listener;
+  }
+
+  public void run() {
+    player_black.start();
+    player_white.start();
+    while (!game_over){
+      if (changePlayer()){
+        activeTimer.para();
+        changeActiveTimer();
+        activeTimer.go();
+      }
+      if (timeOver()){
+        stopBothTimer();
+        game_over = true;
+      }
+    }
+  }
+
+  private void stopBothTimer() {
+    player_black.finished();
+    player_white.finished();
+  }
+
+  private boolean timeOver() {
+    return time_over;
+  }
+
+  private void changeActiveTimer() {
+    if (active_white){
+      activeTimer = player_black;
+      active_white = false;
+    }
+    else{
+      activeTimer = player_white;
+      active_white = true;
+    }
+    change_player = false;
+  }
+
+  private boolean changePlayer() {
+    return change_player;
+  }
+
+  private boolean playing = false;
+
+  public void play(){
+    assert(!playing) : "assert(!playing)";
+    player_white.go();
+    //player_black.go();
+  }
+
+  public boolean whiteWin() {
+    return game_state == WHITE_WIN;
+  }
+
+  public boolean blackWin() {
+    return game_state == BLACK_WIN;
+  }
+
+  /**
+   * finished
+   */
+  public void finished() {
+    game_over = true;
+    player_black.finished();
+    player_white.finished();
+  }
+
+}
