@@ -54,7 +54,11 @@ public class ChessTime extends Thread implements Cloneable{
   public void arranca() {
     go = true;
     seconds += inc;
+    minutes += seconds/60;
+    seconds = seconds%60;
     time = System.currentTimeMillis();
+    computeActualTime();
+    listener_time_pulse.timePulseOver();
   }
 
   public void para() {
@@ -99,7 +103,7 @@ public class ChessTime extends Thread implements Cloneable{
     s = s%60;
     actual_seconds = (seconds < s)?60-s+seconds:(seconds - s);
     actual_minutes = minutes - m;
-    if (actual_minutes < 0){
+    if (actual_minutes <= 0 && actual_seconds <= 0){
       actual_minutes = 0;
       actual_seconds = 0;
       if (listener_time_over != null) listener_time_over.timeOver();

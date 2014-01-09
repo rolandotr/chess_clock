@@ -1,12 +1,17 @@
 package chess_clock;
 
-//import java.applet.*;
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.io.File;
+import java.net.MalformedURLException;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.sound.sampled.*;
-import java.io.*;
+import java.util.Hashtable;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class Ventana extends JFrame {
   JPanel contentPane;
@@ -20,6 +25,8 @@ public class Ventana extends JFrame {
   JLabel jLabel1 = new JLabel();
   JPanel pnWhiteCont = new JPanel();
 
+  private static final ImageIcon WHITE_ICON = new ImageIcon("./imagenes/white_knight.jpg");
+  private static final ImageIcon BLACK_ICON = new ImageIcon("./imagenes/black_kinght3.jpg");
   //temporales
 
   //Construct the frame
@@ -66,8 +73,9 @@ public class Ventana extends JFrame {
     pnDefault.setLayout(gridLayout1);
     pnOptions.setLayout(gridBagLayout3);
     gridLayout1.setColumns(4);
+    gridLayout1.setHgap(0);
     gridLayout1.setRows(2);
-    gridLayout1.setVgap(0);
+    gridLayout1.setVgap(2);
     rb5m10s.setBackground(Color.black);
     rb5m10s.setForeground(SystemColor.inactiveCaptionText);
     rb5m10s.setText("5 min + 10s");
@@ -149,13 +157,16 @@ public class Ventana extends JFrame {
         jButton2_actionPerformed(e);
       }
     });
+//    spnTime.addChangeListener(new ChangeListener(){
+//      public void stateChanged(ChangeEvent e) {
+//        JSpinner sp = (JSpinner)e.getSource();
+//        Integer s = (Integer)sp.getValue();
+//        System.out.println(s);
+//      }
+//    });
     gridLayout2.setColumns(1);
     gridLayout2.setRows(3);
-    jPanel2.setLayout(gridLayout3);
-    gridLayout3.setColumns(2);
-    gridLayout3.setHgap(4);
-    gridLayout3.setRows(2);
-    gridLayout3.setVgap(10);
+    jPanel2.setLayout(gridBagLayout5);
     jLabel3.setBackground(Color.black);
     jLabel3.setForeground(SystemColor.inactiveCaptionText);
     jLabel3.setText("Increase (sg) ");
@@ -171,11 +182,46 @@ public class Ventana extends JFrame {
     jPanel3.setBackground(Color.black);
     jLabel5.setText("");
     jPanel4.setBackground(Color.black);
-    pnBlack.setBackground(Color.black);
+    jPanel5.setBackground(Color.black);
+    jPanel5.setLayout(gridLayout5);
+    jPanel6.setBackground(Color.black);
+    jPanel6.setBorder(titledBorder3);
+    jPanel6.setDebugGraphicsOptions(0);
+    jPanel6.setLayout(gridBagLayout4);
+    jLabel2.setForeground(SystemColor.inactiveCaptionText);
+    jLabel2.setText("White Key");
+    jLabel6.setForeground(SystemColor.inactiveCaptionText);
+    jLabel6.setToolTipText("");
+    jLabel6.setText("Black Key");
+    gridLayout5.setColumns(1);
+    gridLayout5.setHgap(4);
+    gridLayout5.setRows(2);
+    gridLayout5.setVgap(8);
+    chbSound.setBackground(Color.black);
+    chbSound.setForeground(SystemColor.inactiveCaptionText);
+    chbSound.setSelected(true);
+    chbSound.setText("Sound");
+    chbSound.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        chbSound_actionPerformed(e);
+      }
+    });
+    btBlackKey.setText("...");
+    btBlackKey.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        btBlackKey_actionPerformed(e);
+      }
+    });
+    btWhiteKey.setText("...");
+    btWhiteKey.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        btWhiteKey_actionPerformed(e);
+      }
+    });
     contentPane.add(jPanel1, BorderLayout.CENTER);
-    jPanel1.add(pnClock,     new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
+    jPanel1.add(pnClock,       new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0
             ,GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 0));
-    jPanel1.add(pnOptions,    new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
+    jPanel1.add(pnOptions,      new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0
             ,GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(4, 4, 4, 4), 0, 0));
     pnClock.add(pnBlackCont,            new GridBagConstraints(2, 0, 1, 1, 0.2, 0.2
             ,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0));
@@ -185,7 +231,7 @@ public class Ventana extends JFrame {
             ,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0));
     jPanel4.add(jLabel1, null);
     jPanel4.add(jLabel5, null);
-    pnOptions.add(pnDefault,               new GridBagConstraints(0, 0, 1, 2, 1.1, 1.1
+    pnOptions.add(pnDefault,                     new GridBagConstraints(0, 0, 1, 1, 1.1, 1.1
             ,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 0));
     ButtonGroup g = new ButtonGroup();
     g.add(rb5m);
@@ -204,32 +250,101 @@ public class Ventana extends JFrame {
     pnDefault.add(rb2m12s, null);
     pnDefault.add(rb90m30s, null);
     pnDefault.add(rb5m10s, null);
-    pnOptions.add(jButton1,        new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0
-            ,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
-    pnOptions.add(jButton2,        new GridBagConstraints(3, 0, 1, 1, 1.0, 1.0
-            ,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
-    pnOptions.add(jPanel3,       new GridBagConstraints(4, 0, 1, 2, 1.7, 1.7
-            ,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-    pnOptions.add(jPanel2,        new GridBagConstraints(1, 0, 1, 2, 1.0, 1.0
-            ,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
-    jPanel2.add(jLabel4, null);
-    jPanel2.add(spnTime, null);
-    jPanel2.add(jLabel3, null);
-    jPanel2.add(spnIncr, null);
+    pnOptions.add(jPanel2,                new GridBagConstraints(1, 0, 1, 1, 1.1, 1.1
+            ,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 0));
+    jPanel2.add(jLabel4,       new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 4, 2), 0, 0));
+    jPanel2.add(spnTime,          new GridBagConstraints(1, 0, 1, 1, 1.3, 1.3
+            ,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 4, 2), 0, 0));
+    jPanel2.add(jLabel3,       new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(4, 2, 2, 2), 0, 0));
+    jPanel2.add(spnIncr,        new GridBagConstraints(1, 1, 1, 1, 1.3, 1.3
+            ,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 2, 2, 2), 0, 0));
+    pnOptions.add(jPanel5,         new GridBagConstraints(3, 0, 1, 1, 2.0, 2.0
+            ,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 0));
+    jPanel5.add(jButton2, null);
+    jPanel5.add(jButton1, null);
+    pnOptions.add(jPanel6,   new GridBagConstraints(2, 0, 1, 1, 1.1, 1.1
+            ,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 0));
+    jPanel6.add(jLabel2,       new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 1, 2), 0, 0));
+    jPanel6.add(jLabel6,       new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(1, 2, 0, 2), 0, 0));
+    jPanel6.add(cbBlackKey,        new GridBagConstraints(1, 1, 1, 1, 0.1, 0.1
+            ,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(1, 2, 0, 2), 0, 0));
+    jPanel6.add(cbWhiteKey,       new GridBagConstraints(1, 0, 1, 1, 0.1, 0.1
+            ,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 1, 2), 0, 0));
+    jPanel6.add(btBlackKey,       new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(1, 2, 0, 2), 0, 0));
+    jPanel6.add(btWhiteKey,       new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 1, 2), 0, 0));
+    jPanel1.add(jPanel3,    new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0
+            ,GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
+    jPanel3.add(chbSound, null);
     pnBlackCont.add(pnBlack, BorderLayout.CENTER);
     pnWhiteCont.add(pnWhite, BorderLayout.CENTER);
     pnWhite.setBackground(Color.BLACK);
+//    chbSound.addFocusListener(new FocusAdapter(){
+//      public void focusGained(FocusEvent e) {
+//        focusGained_action(e);
+//      }
+//    });
+    //jPanel3.setLayout(new FlowLayout(FlowLayout.RIGHT));
     this.addKeyListener(new KeyAdapter() {
       public void keyTyped(KeyEvent e) {
+        if (game_state != NOT_DEFINED) return;
         keyTypedEvent(e);
       }
+      public void keyPressed(KeyEvent e) {
+        if (game_state != NOT_DEFINED) return;
+        keyPressedEvent(e);
+      }
     });
-    jLabel5.setIcon(new ImageIcon("./imagenes/white_knight.jpg"));
-    jLabel1.setIcon(new ImageIcon("./imagenes/black_kinght3.jpg"));
-//    File f = new File("./sounds/bip.wav");
-//    AudioClip a = Applet.newAudioClip(f.toURL());
-//    a.loop();
+    fillComboKey();
+    jLabel5.setIcon(WHITE_ICON);
+    jLabel1.setIcon(BLACK_ICON);
+    try {
+      tick_audio = Applet.newAudioClip(tick_file.toURL());
+      end_game_audio = Applet.newAudioClip(end_game_file.toURL());
+      change_player_audio = Applet.newAudioClip(change_player_file.toURL());
+    } catch (MalformedURLException ex) {
+    }
+    initChessTime();
   }
+
+  private void focusGained_action(FocusEvent e){
+    this.requestFocus();
+  }
+
+  private static final int[] keys = new int[]{KeyEvent.VK_SPACE, KeyEvent.VK_ENTER, KeyEvent.VK_BACK_SLASH, KeyEvent.VK_SLASH};
+
+  private static final String[] key_names = new String[]{"Space", "Enter", "Back Slash", "Slash"};
+
+  private void fillComboKey() {
+    for (int i = 0; i < key_names.length; i++){
+      cbBlackKey.addItem(key_names[i]);
+      cbWhiteKey.addItem(key_names[i]);
+    }
+    cbBlackKey.setSelectedIndex(1);
+    cbBlackKey.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        cbBlackKey_actionPerformed(e);
+      }
+    });
+    cbWhiteKey.setSelectedIndex(0);
+    cbWhiteKey.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        cbWhiteKey_actionPerformed(e);
+      }
+    });
+  }
+
+  File tick_file = new File("./sounds/Tick.WAV");
+  AudioClip tick_audio = null;
+  File change_player_file = new File("./sounds/click3.wav");
+  AudioClip change_player_audio = null;
+  File end_game_file = new File("./sounds/ding.wav");
+  AudioClip end_game_audio = null;
 
   /**
    * initChessTime
@@ -237,7 +352,9 @@ public class Ventana extends JFrame {
   private void initChessTime() {
     pnBlack.setBackground(Color.black);
     spnTime.setBackground(Color.black);
-    spnTime.setForeground(Color.yellow);
+    spnTime.setPreferredSize(new Dimension(50, 18));
+    spnIncr.setBackground(Color.black);
+    spnIncr.setPreferredSize(new Dimension(50, 18));
     pnBlack.add(min1_black, BorderLayout.WEST);
     pnBlack.add(min2_black, BorderLayout.CENTER);
     pnBlack.add(new JLabel(DOT_DOT));
@@ -267,17 +384,16 @@ public class Ventana extends JFrame {
 
 
   protected void game_over_action(){
+    jButton2_actionPerformed(null);
+    if (end_game_audio != null && sound) end_game_audio.play();
+    if (tick_audio != null && sound) tick_audio.stop();
     if (whiteWin()) {
-      player_white.finished();
-      player_black.finished();
-      JOptionPane.showMessageDialog(this, "White Win!!!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+      showTime(min1_white, min2_white, sec1_white, sec2_white, player_white, m_dec_white, m_uni_white, s_dec_white, s_uni_white, true);
+      JOptionPane.showMessageDialog(this, "Black Win!!!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
     }
     else if (blackWin()) {
-      //JOptionPane p = new JOptionPane("Black Win", JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_OPTION);
-      //p.setVisible(true);
-      player_white.finished();
-      player_black.finished();
-      JOptionPane.showMessageDialog(this, "Black Win!!!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+      showTime(min1_black, min2_black, sec1_black, sec2_black, player_black, m_dec_black, m_uni_black, s_dec_black, s_uni_black, false);
+      JOptionPane.showMessageDialog(this, "White Win!!!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
     }
     else throw new RuntimeException("aqui hay un bugs");
   }
@@ -314,33 +430,42 @@ public class Ventana extends JFrame {
   JPanel jPanel3 = new JPanel();
   GridLayout gridLayout2 = new GridLayout();
   JPanel jPanel2 = new JPanel();
-  GridLayout gridLayout3 = new GridLayout();
-  JSpinner spnIncr = new JSpinner();
+  JSpinner spnIncr = new JSpinner(new SpinnerNumberModel(0, 0, 30, 1));
   JLabel jLabel3 = new JLabel();
-  JSpinner spnTime = new JSpinner();
+  JSpinner spnTime = new JSpinner(new SpinnerNumberModel(0, 0, 90, 1));
   JLabel jLabel4 = new JLabel();
 
   void jButton1_actionPerformed(ActionEvent e) {
     enableAll(false);
-    this.requestFocus(true);
     prepared_game();
     active_white = false;
+    this.requestFocus(true);
     //change_player(true);
   }
 
+  boolean first_time = true;
+
   private void change_player(boolean white) {
+    if (first_time){
+      if (tick_audio != null && sound)  tick_audio.loop();
+      first_time = false;
+    }
+    else{
+      if (change_player_audio != null && sound)  change_player_audio.play();
+    }
     if (white){
       player_white = new ChessTime(player_white);
-      active_white = true;
       player_white.arranca();
       player_white.start();
+      active_white = true;
     }
     else{
       player_black = new ChessTime(player_black);
-      active_white = false;
       player_black.arranca();
       player_black.start();
+      active_white = false;
     }
+    this.requestFocus(true);
   }
 
   private ChessTime createTime() {
@@ -366,14 +491,20 @@ public class Ventana extends JFrame {
     jButton2.setEnabled(!b);
     jButton2.setFocusable(false);
     jButton1.setEnabled(b);
-    jLabel3.setEnabled(b);
-    jLabel4.setEnabled(b);
+//    jLabel3.setEnabled(b);
+//    jLabel4.setEnabled(b);
+    cbBlackKey.setEnabled(b);
+    cbWhiteKey.setEnabled(b);
+    btBlackKey.setEnabled(b);
+    btWhiteKey.setEnabled(b);
   }
 
   void jButton2_actionPerformed(ActionEvent e) {
     player_black.finished();
     player_white.finished();
+    tick_audio.stop();
     enableAll(true);
+    first_time = true;
   }
 
   void rb5m_actionPerformed(ActionEvent e) {
@@ -437,8 +568,12 @@ public class Ventana extends JFrame {
     player_black = createTime();
     player_white = createTime();
     game_over = false;
+    game_state = NOT_DEFINED;
     player_white.addTimeOverListener(new TimeOverListener() {
       public void timeOver() {
+        player_black.finished();
+        player_white.finished();
+        if (game_state != NOT_DEFINED) return;//ya alguien gano antes
         time_over = true;
         game_state = WHITE_WIN;
         game_over_action();
@@ -446,6 +581,9 @@ public class Ventana extends JFrame {
     });
     player_black.addTimeOverListener(new TimeOverListener(){
       public void timeOver() {
+        player_white.finished();
+        player_black.finished();
+        if (game_state != NOT_DEFINED) return;//ya alguien gano antes
         time_over = true;
         game_state = BLACK_WIN;
         game_over_action();
@@ -454,19 +592,19 @@ public class Ventana extends JFrame {
     player_white.addTimePulse(new TimePulseListener() {
       public void timePulseOver() {
 //        player_white.setNotifyPulse(false);
-        showTime(min1_white, min2_white, sec1_white, sec2_white, player_white, m_dec_white, m_uni_white, s_dec_white, s_uni_white);
+        showTime(min1_white, min2_white, sec1_white, sec2_white, player_white, m_dec_white, m_uni_white, s_dec_white, s_uni_white, true);
 //        player_white.setNotifyPulse(true);
       }
-    }, 800);
+    }, 300);
     player_black.addTimePulse(new TimePulseListener() {
       public void timePulseOver() {
 //        player_black.setNotifyPulse(false);
-        showTime(min1_black, min2_black, sec1_black, sec2_black, player_black, m_dec_black, m_uni_black, s_dec_black, s_uni_black);
+        showTime(min1_black, min2_black, sec1_black, sec2_black, player_black, m_dec_black, m_uni_black, s_dec_black, s_uni_black, false);
 //        player_black.setNotifyPulse(false);
       }
-    }, 800);
-    showTime(min1_white, min2_white, sec1_white, sec2_white, player_white, m_dec_white, m_uni_white, s_dec_white, s_uni_white);
-    showTime(min1_black, min2_black, sec1_black, sec2_black, player_black, m_dec_black, m_uni_black, s_dec_black, s_uni_black);
+    }, 300);
+    showTime(min1_white, min2_white, sec1_white, sec2_white, player_white, m_dec_white, m_uni_white, s_dec_white, s_uni_white, true);
+    showTime(min1_black, min2_black, sec1_black, sec2_black, player_black, m_dec_black, m_uni_black, s_dec_black, s_uni_black, false);
   }
 
 
@@ -488,13 +626,38 @@ public class Ventana extends JFrame {
   int s_uni_black;
 
 
+  private int key_white = KeyEvent.VK_SPACE;
+  private int key_black = KeyEvent.VK_ENTER;
+
   public void keyTypedEvent(KeyEvent e){
     if (active_white){
+      if (using_white_pressed_key) return;
+      if (e.getKeyChar() != key_white) return;
       player_white.finished();
       change_player(false);
       active_white = false;
     }
     else{
+      if (using_black_pressed_key) return;
+      if (e.getKeyChar() != key_black) return;
+      player_black.finished();
+      change_player(true);
+      active_white = true;
+    }
+    change_player = true;
+  }
+
+  public void keyPressedEvent(KeyEvent e){
+    if (active_white){
+      if (!using_white_pressed_key) return;
+      if (e.getKeyCode() != white_key_pressed) return;
+      player_white.finished();
+      change_player(false);
+      active_white = false;
+    }
+    else{
+      if (!using_black_pressed_key) return;
+      if (e.getKeyCode() != black_key_pressed) return;
       player_black.finished();
       change_player(true);
       active_white = true;
@@ -527,6 +690,14 @@ public class Ventana extends JFrame {
   Border border5;
   Border border6;
   JPanel jPanel4 = new JPanel();
+  JPanel jPanel5 = new JPanel();
+  JPanel jPanel6 = new JPanel();
+  JLabel jLabel2 = new JLabel();
+  JComboBox cbBlackKey = new JComboBox();
+  JLabel jLabel6 = new JLabel();
+  JComboBox cbWhiteKey = new JComboBox();
+  GridLayout gridLayout5 = new GridLayout();
+  JCheckBox chbSound = new JCheckBox();
 
   public boolean whiteWin() {
     return game_state == WHITE_WIN;
@@ -536,10 +707,13 @@ public class Ventana extends JFrame {
     return game_state == BLACK_WIN;
   }
 
-  private void showTime(JLabel min1, JLabel min2, JLabel sec1, JLabel sec2, ChessTime chessTime, int m_dec, int m_uni, int s_dec, int s_uni) {
+  private void showTime(JLabel min1, JLabel min2, JLabel sec1, JLabel sec2, ChessTime chessTime, int m_dec, int m_uni, int s_dec, int s_uni, boolean white) {
     int m = chessTime.getMinutes();
     int s = chessTime.getSeconds();
     int new_m_dec = 0;
+    if (m > 99) m = m%100;//parche debido a que no pongo mas de dos cifras en los minutos
+    //realmente no lo admito, si se va ajugar tan rapido, pues que pongan partidas rapidas.
+    //Esto en un futuro si realmente es necesario se puede arreglar
     if (m >= 10){
       new_m_dec = (m-m%10)/10;
       if (new_m_dec != m_dec){
@@ -549,8 +723,9 @@ public class Ventana extends JFrame {
     else{
       min1.setIcon(CERO);
     }
-    m_dec(new_m_dec);
-    showTimeRemain(m%10, (s-s%10)/10, s%10, min1, min2, sec1, sec2, m_dec, m_uni, s_dec, s_uni);
+    if (white) m_dec_white = new_m_dec;
+    else m_dec_black = new_m_dec;
+    showTimeRemain(m%10, (s-s%10)/10, s%10, min1, min2, sec1, sec2, m_dec, m_uni, s_dec, s_uni, white);
   }
 
   private void m_dec(int new_m_dec) {
@@ -562,20 +737,23 @@ public class Ventana extends JFrame {
     }
   }
 
-  private void showTimeRemain(int min, int s1, int s2, JLabel min1, JLabel min2, JLabel sec1, JLabel sec2, int m_dec, int m_uni, int s_dec, int s_uni) {
+  private void showTimeRemain(int min, int s1, int s2, JLabel min1, JLabel min2, JLabel sec1, JLabel sec2, int m_dec, int m_uni, int s_dec, int s_uni, boolean white) {
     if (min == m_uni && s1 == s_dec && s2 == s_uni)
       return;
     if (min != m_uni) {
       min2.setIcon(getNumberIcon(min));
-      m_uni(min);
+      if (white) m_uni_white = min;
+      else m_uni_black = min;
     }
     if (s1 != s_dec) {
       sec1.setIcon(getNumberIcon(s1));
-      s_dec(s1);
+      if (white) s_dec_white = s1;
+      else s_dec_black = s1;
     }
     if (s2 != s_uni) {
       sec2.setIcon(getNumberIcon(s2));
-      s_uni(s2);
+      if (white) s_uni_white = s2;
+      else s_uni_black = s2;
     }
     pnClock.validate();
   }
@@ -620,6 +798,68 @@ public class Ventana extends JFrame {
       case 8 : return Ventana.OCHO;
       case 9 : return Ventana.NUEVE;
       default : throw new RuntimeException("...Esto es un bugs..");
+    }
+  }
+
+  private boolean sound = true;
+  JButton btBlackKey = new JButton();
+  JButton btWhiteKey = new JButton();
+  GridBagLayout gridBagLayout4 = new GridBagLayout();
+  GridBagLayout gridBagLayout5 = new GridBagLayout();
+
+  void chbSound_actionPerformed(ActionEvent e) {
+    this.requestFocus();
+    sound = !sound;
+    if (!first_time){
+      if (sound)tick_audio.loop();
+      else tick_audio.stop();
+    }
+  }
+
+  void cbWhiteKey_actionPerformed(ActionEvent e) {
+    int index = cbWhiteKey.getSelectedIndex();
+//    if (keys[index] == key_black){
+//      JOptionPane.showMessageDialog(this, "Black play with \""+key_names[index]+"\" key too", "Error", JOptionPane.ERROR_MESSAGE);
+//      cbWhiteKey.setSelectedIndex(((index > 0)?index-1:index+1));
+//      return;
+//    }
+    key_white = keys[index];
+    using_white_pressed_key = false;
+  }
+
+  void cbBlackKey_actionPerformed(ActionEvent e) {
+    int index = cbBlackKey.getSelectedIndex();
+//    if (keys[index] == key_white){
+//      JOptionPane.showMessageDialog(this, "White play with \""+key_names[index]+"\" key too", "Error", JOptionPane.ERROR_MESSAGE);
+//      cbBlackKey.setSelectedIndex(((index > 0)?index-1:index+1));
+//      return;
+//    }
+    key_black = keys[index];
+    using_black_pressed_key = false;
+  }
+
+
+  private int black_key_pressed = -1;
+  private int white_key_pressed = -1;
+
+  private boolean using_black_pressed_key = false;
+  private boolean using_white_pressed_key = false;
+
+  void btBlackKey_actionPerformed(ActionEvent e) {
+    KeySelectorDialog dialog = new KeySelectorDialog(this, WHITE_ICON, false);
+    dialog.show();
+    if (dialog.isKeySelected()){
+      black_key_pressed = dialog.getKeySelected();
+      using_black_pressed_key = true;
+    }
+  }
+
+  void btWhiteKey_actionPerformed(ActionEvent e) {
+    KeySelectorDialog dialog = new KeySelectorDialog(this, BLACK_ICON, true);
+    dialog.show();
+    if (dialog.isKeySelected()){
+      white_key_pressed = dialog.getKeySelected();
+      using_white_pressed_key = true;
     }
   }
 }

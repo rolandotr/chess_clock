@@ -1,0 +1,28 @@
+package chess_clock;
+
+import java.applet.*;
+import java.io.*;
+import sun.audio.*;
+
+public class TestSound{
+
+  FileInputStream file;
+  private TestSound() throws FileNotFoundException {
+    file = new FileInputStream("./sounds/Tick.wav");
+    (new Thread(){
+      public void run(){
+        while(true){
+          AudioPlayer.player.start(file);
+          synchronized (file) {
+
+          }
+        }
+      }
+    }).start();
+  }
+
+  public static void main(String[] args) throws FileNotFoundException {
+    TestSound t = new TestSound();
+  }
+
+}

@@ -1,0 +1,156 @@
+package chess_clock;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.sound.sampled.*;
+
+
+public class MediaApplication  {
+ // Declare media-related variables
+ Player player = null;
+ Player newPlayer = null;
+ Component visualComponent = null;
+ Component controllerComponent = null;
+
+ // Other variables
+ Object menuItems[][] = {{"File","Open","-","Exit"}};
+ MenuItemHandler mih = new MenuItemHandler();
+ MyMenuBar menuBar = new MyMenuBar(menuItems,mih,mih);
+ int screenWidth = 400;
+ int screenHeight = 400;
+ TextField text = new TextField();
+ String directory = ".";
+
+ public static void main(String args[]){
+  MediaApplication app = new MediaApplication();
+ }
+ public MediaApplication() {
+  super("MediaApplication");
+  setMenuBar(menuBar);
+  add("North",text);
+  setSize(screenWidth,screenHeight);
+  addWindowListener(new WindowEventHandler());
+  show();
+ }
+ String getFileName() {
+  // Display file dialog
+  FileDialog dialog = new FileDialog(MediaApplication.this,
+  "Open Media File", FileDialog.LOAD);
+  dialog.setDirectory(directory);
+  dialog.show();
+  if(dialog.getFile()==null) return null;
+  directory = dialog.getDirectory();
+  String file = directory + dialog.getFile();
+  return file;
+ }
+ Player createPlayer(String fileName) {
+  Player newPlayer;
+  try {
+   MediaLocator locator = new MediaLocator("file:"+fileName);
+   if(locator == null) return null;
+   newPlayer = Manager.createPlayer(locator);
+  }catch(Exception ex) {
+    text.setText(ex.toString());
+    return null;
+  }
+  return newPlayer;
+
+}
+
+
+ void realizeComplete() {
+  visualComponent = player.getVisualComponent();
+  controllerComponent = player.getControlPanelComponent();
+  if(visualComponent != null)
+   add("Center",visualComponent);
+  if(controllerComponent != null)
+   add("South",controllerComponent);
+  validate();
+  player.prefetch();
+ }
+ void prefetchComplete() {
+  text.setText("");
+  if(player.getTargetState() != Controller.Started)
+   player.start();
+ }
+ void controllerError() {
+  player.close();
+  if(visualComponent != null) remove(visualComponent);
+  if(controllerComponent != null) remove(controllerComponent);
+  validate();
+  visualComponent = null;
+  controllerComponent = null;
+  player.removeControllerListener(this);
+  player = null;
+ }
+ void controllerClosed() {
+  if(visualComponent != null) remove(visualComponent);
+  if(controllerComponent != null) remove(controllerComponent);
+  player = null;
+  System.gc();
+  System.runFinalization();
+  if(newPlayer!=null) {
+   player = newPlayer;
+   newPlayer = null;
+   player.addControllerListener(this);
+   text.setText("Loading ...");
+   player.realize();
+  }
+  validate();
+ }
+ public synchronized void controllerUpdate(ControllerEvent e) {
+  // Determine event type
+  if(e instanceof RealizeCompleteEvent) realizeComplete();
+  else if(e instanceof PrefetchCompleteEvent) prefetchComplete();
+  else if(e instanceof ControllerErrorEvent) controllerError();
+  else if(e instanceof ControllerClosedEvent) controllerClosed();
+ }
+ class MenuItemHandler implements ActionListener, ItemListener {
+  public void actionPerformed(ActionEvent ev){
+   String s=ev.getActionCommand();
+   if(s.equals("Exit")){
+    System.exit(0);
+   }else if(s=="Open"){
+    // Get the name of the media file
+    String fileName = getFileName();
+    if(fileName == null) return;
+    // Create player for file
+    newPlayer = createPlayer(fileName);
+    // Stop old player
+    boolean closingPlayer = false;
+    if(player!=null){
+     closingPlayer = true;
+     player.close();
+    }
+    if(newPlayer == null) return;
+    if(!closingPlayer) {
+     player = newPlayer;
+     player.addControllerListener(MediaApplication.this);
+     text.setText("Loading ...");
+     player.realize();
+    }
+   }
+  }
+  public void itemStateChanged(ItemEvent e){
+  }
+ }
+ class WindowEventHandler extends WindowAdapter {
+  public void windowClosing(WindowEvent e){
+   // Stop the player
+   if(player!=null) {
+    player.close();
+    while(player!=null) {
+     // wait a half second
+     try{
+      Thread.currentThread().sleep(500);
+     }catch(Exception ex) {
+     }
+    }
+   }
+   System.exit(0);
+  }
+
+}
+
+}
+

@@ -1,0 +1,61 @@
+package chess_clock;
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyAdapter;
+
+public class KeySelectorDialog extends JDialog {
+
+  JPanel panel1 = new JPanel();
+  BorderLayout borderLayout1 = new BorderLayout();
+  JPanel jPanel1 = new JPanel();
+  JLabel lbPlayerIcon = new JLabel();
+  JLabel lbText = new JLabel();
+  private int key_selected = -1;
+  private ImageIcon image;
+
+  public KeySelectorDialog(Frame frame, ImageIcon image) {
+    super(frame, "Key Selection", true);
+    this.image = image;
+    try {
+      jbInit();
+      pack();
+    }
+    catch(Exception ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  private void jbInit() throws Exception {
+    panel1.setLayout(borderLayout1);
+    lbPlayerIcon.setText("");
+    lbPlayerIcon.setIcon(image);
+    lbText.setFont(new java.awt.Font("Times New Roman", 1, 16));
+    lbText.setText("Pressed your preferred key for play !!!!");
+    getContentPane().add(panel1);
+    panel1.add(jPanel1, BorderLayout.CENTER);
+    jPanel1.add(lbPlayerIcon);
+    jPanel1.add(lbText);
+    this.addKeyListener(new KeyAdapter(){
+      public void keyPressed(KeyEvent e) {
+        keyPressedAction(e);
+      }
+    });
+  }
+  private void keyPressedAction(KeyEvent e){
+    key_selected = e.getKeyCode();
+    this.dispose();
+  }
+
+  public int getKeySelected(){
+    assert(isKeySelected()) : "assert(isKeySelected())";
+    return key_selected;
+  }
+
+  public boolean isKeySelected() {
+    return key_selected != -1;
+  }
+
+}
